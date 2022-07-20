@@ -4,18 +4,18 @@ import { textAlign } from "@mui/system";
 export default function Footer() {
   return (
     <>
-      <footer class="footer" id="resources">
-        <div class="container">
+      <footer className="footer" id="resources">
+        <div className="container">
           {/* <!-- Website Logo --> */}
-          <div class="logo">
+          <div className="logo">
             <h4 className="contact">Contact Us:</h4>
             <a href="mailto:alhan.kaypour@gmail.com" style={{ color: "gray" }}>
               alhan.kaypour@gmail.com
             </a>
           </div>
           {/* <!-- Quick Links --> */}
-          <div class="quick-links">
-            <div class="links-group">
+          <div className="quick-links">
+            <div className="links-group">
               <span>Features</span>
               <div>
                 <a href="#">Link Shortening</a>
@@ -23,7 +23,7 @@ export default function Footer() {
                 <a href="#">Analytics</a>
               </div>
             </div>
-            <div class="links-group">
+            <div className="links-group">
               <span>Resources</span>
               <div>
                 <a href="#">Blog</a>
@@ -31,7 +31,7 @@ export default function Footer() {
                 <a href="#">Support</a>
               </div>
             </div>
-            <div class="links-group">
+            <div className="links-group">
               <span>Company</span>
               <div>
                 <a href="#">About</a>
@@ -41,7 +41,7 @@ export default function Footer() {
             </div>
           </div>
           {/* <!-- Social Media --> */}
-          <div class="social-media">
+          <div className="social-media">
             <a href="#">
               <img
                 src="https://raw.githubusercontent.com/MohamedAridah/frontendmentor_url-shortening-api/main/images/icon-facebook.svg"
