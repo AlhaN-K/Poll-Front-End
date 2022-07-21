@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,15 +17,21 @@ export default function Header() {
             edge="start"
             color="inherit"
             aria-label="menu"
-            // sx={{ mr: 2 }}
           >
             <WorkspacesIcon />
           </IconButton>
           <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            Pollymar
+            <Link to={"/"} style={{ color: "white" }}>
+              Pollymar
+            </Link>
           </Typography>
-          <Button style={{ fontWeight: "bold" }} color="inherit">
-            My Polls
+          <Button
+            style={{ fontWeight: "bold", border: "1px solid" }}
+            color="inherit"
+          >
+            <Link to={"/signin"} style={{ color: "white" }}>
+              My Polls
+            </Link>
           </Button>
         </Toolbar>
       </AppBar>
