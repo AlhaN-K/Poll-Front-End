@@ -22,11 +22,14 @@ const SignIn = () => {
   };
 
   const login = () => {
-    axios.post("http://localhost:3000/login", loginPayload).then((response) => {
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-      setAuthToken(token);
-    });
+    axios
+      .post("http://localhost:3000/login", loginPayload)
+      .then((response) => {
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        setAuthToken(token);
+      })
+      .catch((error) => console.log("error :>> ", error));
   };
   return (
     <>
