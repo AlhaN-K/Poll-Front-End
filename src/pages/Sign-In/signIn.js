@@ -2,13 +2,31 @@ import "./signIn.css";
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import axios from "axios";
+// import { Link } from "react-router-dom";
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const loginPayload = {
+    username: username,
+    password: password,
+  };
+  const setAuthToken = (token) => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  };
+
   const login = () => {
-    console.log(`Logged in with ${username} and ${password}`);
+    axios.post("http://localhost:3000/login", loginPayload).then((response) => {
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      setAuthToken(token);
+    });
   };
   return (
     <>
@@ -41,9 +59,11 @@ const SignIn = () => {
             variant="outlined"
           />
         </div>
+        {/* <Link to={"/poll"} style={{ color: "white" }}> */}
         <Button style={{ width: "100%" }} variant="contained" onClick={login}>
           Sign-In
         </Button>
+        {/* </Link> */}
       </form>
     </>
   );
