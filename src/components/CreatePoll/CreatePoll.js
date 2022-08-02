@@ -2,12 +2,12 @@ import "./CreatePoll.css";
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CreatePoll = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
+  const navigate = useNavigate();
   return (
     <>
       <div className="header">
@@ -40,11 +40,13 @@ const CreatePoll = () => {
             rows={4}
           />
         </div>
-        <Link to={"/setOption"} style={{ color: "white" }}>
-          <Button style={{ width: "100%" }} variant="contained">
-            Next
-          </Button>
-        </Link>
+        <Button
+          style={{ width: "100%" }}
+          variant="contained"
+          onClick={() => navigate("/setOption")}
+        >
+          Next
+        </Button>
       </form>
     </>
   );

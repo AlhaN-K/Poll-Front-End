@@ -2,15 +2,14 @@ import "./SetOption.css";
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SetOption = () => {
   const [options, setOptions] = useState(["", ""]);
-  // const [count, setCount] = useState(1);
-  const addOption = () => {
-    setOptions(options.concat(""));
-    // setCount(count + 1);
-  };
+  const navigate = useNavigate();
+
+  const addOption = () => setOptions(options.concat(""));
+
   const removeOption = (e) => {
     e.preventDefault();
     setOptions(options.slice(0, -1));
@@ -20,9 +19,6 @@ const SetOption = () => {
     setOptions(options);
   };
 
-  // const incrementCount = () => {
-  //   setCount(count + 1);
-  // };
   return (
     <>
       <div className="header">
@@ -45,19 +41,18 @@ const SetOption = () => {
             </div>
           );
         })}
-        <Link to={"/createPoll"}>
-          <Button
-            style={{ width: "10%", marginRight: "5px" }}
-            variant="outlined"
-          >
-            Back
-          </Button>
-        </Link>
-        {/* <Link to={"/poll"}> */}
+
+        <Button
+          style={{ width: "10%", marginRight: "5px" }}
+          variant="outlined"
+          onClick={() => navigate("/createPoll")}
+        >
+          Back
+        </Button>
+
         <Button style={{ width: "10%" }} variant="contained">
           Create
         </Button>
-        {/* </Link> */}
         <div className="addRemoveBtn">
           <Button
             style={{

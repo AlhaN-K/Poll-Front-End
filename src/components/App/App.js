@@ -4,7 +4,7 @@ import React from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Home from "..//HomePage/HomePage";
-import SignIn from "..//Sign-In/SignIn";
+import SignIn from "../Sign-In/SignIn";
 import CreatePoll from "../CreatePoll/CreatePoll";
 import SetOption from "../CreatePoll/SetOption";
 
