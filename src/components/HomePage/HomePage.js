@@ -1,8 +1,9 @@
 import "./HomePage.css";
 import poll from "../../imgs/poll.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <>
       <main className="main">
@@ -14,11 +15,10 @@ const Home = () => {
               Pollymar let you send people a set of times and see which one
               works best for your event.
             </p>
-            <Link to={"/createPoll"} style={{ color: "white" }}>
-              <a href="#url-shorten-form" className="btn btn-lg">
-                Create Poll
-              </a>
-            </Link>
+
+            <div className="btn btn-lg" onClick={() => navigate("createPoll")}>
+              Create Poll
+            </div>
           </div>
           <div className="landing-image">
             <img src={poll} alt="poll Illustration" />
