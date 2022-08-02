@@ -1,9 +1,6 @@
 import "./SignIn.css";
 import React, { useState } from "react";
-// import { Link } from "react-router-dom";
 import TextField from "@mui/material/TextField";
-// import Alert from "@mui/material/Alert";
-// import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import axios from "axios";
 const url = "http://localhost:3000/login";
@@ -11,6 +8,10 @@ const url = "http://localhost:3000/login";
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameErr, setUsernameErr] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+  const [incorrectUsername, setIncorrectUsername] = useState("");
+  const [incorrectPassword, setIncorrectPassword] = useState("");
 
   const loginPayload = {
     username: username,
@@ -23,21 +24,34 @@ const SignIn = () => {
       delete axios.defaults.headers.common["authorization"];
     }
   };
-  const login = async () => {
-    if (!username && !password) {
-      console.log("Please fill out the form!");
+  // requests users data from backend
+  axios
+    .post(url, loginPayload)
+    .then((response) => {
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      setAuthToken(token);
+    })
+    .catch((error) => console.log("error :>> ", error));
+
+  // Login form validation
+  const loginForm = async () => {
+    setUsernameErr("");
+    setPasswordErr("");
+    if (username === "") {
+      setUsernameErr("Username is a required field.");
+      setPasswordErr("Password is a required field.");
+    } else if (password === "") {
+      setPasswordErr("Password is a required field.");
     }
-    console.log("loginPayload :>> ", loginPayload);
-    axios
-      .post(url, loginPayload)
-      .then((response) => {
-        console.log("response :>> ", response);
-        const token = response.data.token;
-        console.log("token :>> ", token);
-        localStorage.setItem("token", token);
-        setAuthToken(token);
-      })
-      .catch((error) => console.log("error :>> ", error));
+    // validates the username & password from db
+    setIncorrectUsername("");
+    setIncorrectPassword("");
+    if (username !== loginPayload.username) {
+      setIncorrectUsername("Invalid Username");
+    } else if (password !== loginPayload.password) {
+      setIncorrectPassword("Invalid Password");
+    }
   };
   return (
     <>
@@ -45,7 +59,7 @@ const SignIn = () => {
         <h1>Sign-In to your account</h1>
       </div>
       <form>
-        <div className="group">
+        <div className="group-Input">
           <h4>Enter your username:</h4>
           <TextField
             style={{ width: "100%" }}
@@ -57,7 +71,15 @@ const SignIn = () => {
             variant="outlined"
           />
         </div>
-        <div className="group">
+        <div className="inputError">
+          <span>
+            {" "}
+            {username === "" ? usernameErr : ""}
+            {username !== loginPayload.username ? incorrectUsername : ""}
+          </span>
+        </div>
+
+        <div className="group-Input">
           <h4>Enter your password:</h4>
           <TextField
             style={{ width: "100%" }}
@@ -70,11 +92,20 @@ const SignIn = () => {
             variant="outlined"
           />
         </div>
-        {/* <Link to={"/poll"} style={{ color: "white" }}> */}
-        <Button style={{ width: "100%" }} variant="contained" onClick={login}>
+        <div className="inputError">
+          <span>
+            {password === "" ? passwordErr : ""}
+            {password !== loginPayload.password ? incorrectPassword : ""}
+          </span>
+        </div>
+
+        <Button
+          style={{ width: "100%", marginTop: "30px" }}
+          variant="contained"
+          onClick={loginForm}
+        >
           Sign-In
         </Button>
-        {/* </Link> */}
       </form>
     </>
   );
