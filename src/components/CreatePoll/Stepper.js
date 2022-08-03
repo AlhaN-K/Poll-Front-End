@@ -1,4 +1,5 @@
 import "./CreatePoll.css";
+import "./SetOption.css";
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
@@ -8,14 +9,21 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
-const steps = ["Title & Description", "Options", "Create Poll"];
+const steps = ["Title & Description", "Options", "Get Link"];
 
-export default function HorizontalNonLinearStepper() {
+export default function CreatePollStepper() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [options, setOptions] = useState(["", ""]);
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
+  const addOption = () => setOptions(options.concat(""));
+  const removeOption = () => setOptions(options.slice(0, -1));
 
+  const handleInputChange = (value, index) => {
+    options[index] = value;
+    setOptions(options);
+  };
   const totalSteps = () => {
     return steps.length;
   };
@@ -74,34 +82,83 @@ export default function HorizontalNonLinearStepper() {
         ))}
       </Stepper>
       <div>
-        <form>
-          <div className="group">
-            <h4>Enter Title:</h4>
-            <TextField
-              style={{ width: "100%" }}
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              id="filled-required"
-              label="Title"
-              variant="outlined"
-            />
-          </div>
-          <div className="group">
-            <h4>Enter Description:</h4>
-            <TextField
-              style={{ width: "100%" }}
-              required
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              id="filled-required"
-              label="Desc"
-              variant="outlined"
-              multiline
-              rows={4}
-            />
-          </div>
-        </form>
+        {activeStep === 0 && (
+          <form>
+            <div className="group">
+              <h4>Enter Title:</h4>
+              <TextField
+                style={{ width: "100%" }}
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                id="filled-required"
+                label="Title"
+                variant="outlined"
+              />
+            </div>
+            <div className="group">
+              <h4>Enter Description:</h4>
+              <TextField
+                style={{ width: "100%" }}
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                id="filled-required"
+                label="Desc"
+                variant="outlined"
+                multiline
+                rows={4}
+              />
+            </div>
+          </form>
+        )}
+        {activeStep === 1 && (
+          <form>
+            {options.map((currentOption, index) => {
+              return (
+                <div className="group" key={index}>
+                  <h4>Option {index + 1}:</h4>
+                  <TextField
+                    style={{ width: "100%" }}
+                    required
+                    value={currentOption}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    id="filled-required"
+                    label=""
+                    variant="outlined"
+                  />
+                </div>
+              );
+            })}
+            <div className="addRemoveBtn">
+              <Button
+                style={{
+                  width: "10%",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                  borderWidth: "2px",
+                }}
+                variant="outlined"
+                onClick={removeOption}
+              >
+                -
+              </Button>
+              <Button
+                style={{
+                  width: "10%",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                  marginLeft: "5px",
+                  borderWidth: "2px",
+                }}
+                variant="outlined"
+                onClick={addOption}
+              >
+                +
+              </Button>
+            </div>
+          </form>
+        )}
         {allStepsCompleted() ? (
           <React.Fragment>
             {" "}
@@ -140,8 +197,8 @@ export default function HorizontalNonLinearStepper() {
                 ) : (
                   <Button onClick={handleComplete}>
                     {completedSteps() === totalSteps() - 1
-                      ? "Finish"
-                      : "Complete Step"}
+                      ? "Create"
+                      : "Complete"}
                   </Button>
                 ))}
             </Box>
