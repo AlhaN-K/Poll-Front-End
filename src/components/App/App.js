@@ -4,9 +4,9 @@ import React from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Home from "..//HomePage/HomePage";
-import SignIn from "../Sign-In/SignIn";
-import CreatePoll from "../CreatePoll/CreatePoll";
-import SetOption from "../CreatePoll/SetOption";
+import SignIn from "../SignIn/SignIn";
+import Stepper from "../CreatePoll/Stepper";
+import PollList from "../PollList/PollList";
 
 const App = () => {
   return (
@@ -17,8 +17,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/createPoll" element={<CreatePoll />} />
-          <Route path="/setOption" element={<SetOption />} />
+          <Route path="/createPoll" element={<Stepper />} />
+          <Route path="/pollList" element={<PollList />} />
         </Routes>
       </Router>
       <Footer />
