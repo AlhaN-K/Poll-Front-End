@@ -1,7 +1,10 @@
 .footer {
   padding-top: 50px;
-  padding-bottom: 20px;
+  padding-bottom: 50px;
   background: black;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .footer .container {
@@ -13,6 +16,9 @@
 }
 
 @media (max-width: 705px) {
+  .footer {
+    position: relative;
+  }
   .footer .container {
     flex-wrap: nowrap;
     flex-direction: column;
@@ -29,6 +35,9 @@
   .footer .contact {
     text-align: center;
   }
+  .footer {
+    position: relative;
+  }
 }
 
 .footer .quick-links {
@@ -42,6 +51,9 @@
     align-items: center;
     text-align: center;
     gap: 30px;
+  }
+  .footer {
+    position: relative;
   }
 }
 
