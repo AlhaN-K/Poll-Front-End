@@ -1,0 +1,26 @@
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+.cardStyle {
+  width: 80%;
+}
+.btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+.link-input {
+  border: 1px solid #bebebe;
+  border-radius: 5px;
+  height: 40px;
+  width: 300px;
+}
+@media (max-width: 550px) {
+  .link-input {
+    height: 30px;
+    width: 230px;
+  }
+}
