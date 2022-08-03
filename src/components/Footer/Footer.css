@@ -4,9 +4,13 @@
   background: black;
   position: absolute;
   bottom: 0;
+  overflow: hidden;
   width: 100%;
 }
-
+.parent {
+  position: relative;
+  min-height: 50vh;
+}
 .footer .container {
   display: flex;
   justify-content: center;
@@ -15,7 +19,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 705px) {
+@media (max-width: 814px) {
   .footer {
     position: relative;
   }
@@ -31,7 +35,7 @@
   flex: 1 0 auto;
   color: white;
 }
-@media (max-width: 814px) {
+@media (max-width: 705px) {
   .footer .contact {
     text-align: center;
   }
