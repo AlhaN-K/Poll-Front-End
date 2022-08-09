@@ -1,6 +1,7 @@
 import "./CreatePoll.css";
 import "./SetOption.css";
 import React, { useState } from "react";
+// import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -13,10 +14,13 @@ const steps = ["Title & Description", "Options", "Get Link"];
 
 export default function CreatePollStepper() {
   const [title, setTitle] = useState("");
+  const [titleError, setTitleError] = useState("");
   const [description, setDescription] = useState("");
-  const [options, setOptions] = useState(["", ""]);
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState({});
+  const [descriptionError, setDescriptionError] = useState("");
+  const [options, setOptions] = useState([""]);
+  const [optionsError, setOptionsError] = useState("");
+  const [activeStep, setActiveStep] = useState(0);
+  const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
 
@@ -41,11 +45,19 @@ export default function CreatePollStepper() {
   };
 
   const handleNext = () => {
+    setTitleError("");
+    setDescriptionError("");
+    setOptionsError("");
+    if (title === "" || description === "") {
+      setTitleError("Title is a required field.");
+      setDescriptionError("Description is a required field.");
+      // setActiveStep();
+    } else if (options === "") {
+      setOptionsError("Please set an option");
+    }
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
+        ? steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
   };
@@ -59,10 +71,10 @@ export default function CreatePollStepper() {
   };
 
   const handleComplete = () => {
+    handleNext();
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
-    handleNext();
   };
 
   const handleReset = () => {
@@ -95,7 +107,11 @@ export default function CreatePollStepper() {
                 label="Title"
                 variant="outlined"
               />
+              <div className="inputValidation">
+                <span>{title === "" ? titleError : ""}</span>
+              </div>
             </div>
+
             <div className="group">
               <h4>Enter Description:</h4>
               <TextField
@@ -108,7 +124,10 @@ export default function CreatePollStepper() {
                 variant="outlined"
                 multiline
                 rows={4}
-              />
+              />{" "}
+              <div className="inputValidation">
+                <span>{description === "" ? descriptionError : ""}</span>
+              </div>
             </div>
           </form>
         )}
@@ -127,6 +146,9 @@ export default function CreatePollStepper() {
                     label=""
                     variant="outlined"
                   />
+                  <div className="inputValidation">
+                    <span>{options === "" ? optionsError : ""} </span>
+                  </div>{" "}
                 </div>
               );
             })}
@@ -159,11 +181,53 @@ export default function CreatePollStepper() {
             </div>
           </form>
         )}
+        {activeStep === 2 && (
+          <>
+            <form>
+              <div className="group">
+                <h4> The link to your poll is:</h4>
+                <TextField
+                  style={{ width: "100%" }}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  id="filled-required"
+                  label=""
+                  variant="outlined"
+                />
+                <small style={{ color: "gray", fontSize: "11px" }}>
+                  Everybody who has this link can participate in your poll - no
+                  sign-in required.
+                </small>
+                <h4> The admin link to manage your poll is:</h4>
+                <TextField
+                  style={{ width: "100%" }}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  id="filled-required"
+                  label=""
+                  variant="outlined"
+                />
+                <small style={{ color: "maroon", fontSize: "11px" }}>
+                  Do not send this link to your participants!!
+                </small>
+              </div>
+            </form>
+          </>
+        )}
         {allStepsCompleted() ? (
           <React.Fragment>
             {" "}
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              All steps completed - you're all set
+            <Typography
+              sx={{
+                mt: 2,
+                mb: 1,
+                marginTop: "80px",
+                fontWeight: "bold",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              You are all set !!!
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
@@ -183,9 +247,9 @@ export default function CreatePollStepper() {
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
+              {/* <Button onClick={handleNext} sx={{ mr: 1 }}>
                 Next
-              </Button>
+              </Button> */}
               {activeStep !== steps.length &&
                 (completed[activeStep] ? (
                   <Typography
@@ -196,9 +260,7 @@ export default function CreatePollStepper() {
                   </Typography>
                 ) : (
                   <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1
-                      ? "Create"
-                      : "Complete"}
+                    {completedSteps() === totalSteps() - 1 ? "Create" : "Next"}
                   </Button>
                 ))}
             </Box>
