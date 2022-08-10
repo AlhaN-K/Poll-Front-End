@@ -1,5 +1,4 @@
-import "./CreatePoll.css";
-import "./SetOption.css";
+import "./Stepper.css";
 import React, { useState } from "react";
 // import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -51,7 +50,7 @@ export default function CreatePollStepper() {
     if (title === "" || description === "") {
       setTitleError("Title is a required field.");
       setDescriptionError("Description is a required field.");
-      // setActiveStep();
+      setActiveStep();
     } else if (options === "") {
       setOptionsError("Please set an option");
     }
@@ -140,7 +139,7 @@ export default function CreatePollStepper() {
                   <TextField
                     style={{ width: "100%" }}
                     required
-                    value={currentOption}
+                    value={currentOption[index]}
                     onChange={(e) => handleInputChange(e.target.value)}
                     id="filled-required"
                     label=""
@@ -198,18 +197,6 @@ export default function CreatePollStepper() {
                   Everybody who has this link can participate in your poll - no
                   sign-in required.
                 </small>
-                <h4> The admin link to manage your poll is:</h4>
-                <TextField
-                  style={{ width: "100%" }}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  id="filled-required"
-                  label=""
-                  variant="outlined"
-                />
-                <small style={{ color: "maroon", fontSize: "11px" }}>
-                  Do not send this link to your participants!!
-                </small>
               </div>
             </form>
           </>
@@ -247,9 +234,9 @@ export default function CreatePollStepper() {
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
-              {/* <Button onClick={handleNext} sx={{ mr: 1 }}>
+              <Button onClick={handleNext} sx={{ mr: 1 }}>
                 Next
-              </Button> */}
+              </Button>
               {activeStep !== steps.length &&
                 (completed[activeStep] ? (
                   <Typography
@@ -260,7 +247,9 @@ export default function CreatePollStepper() {
                   </Typography>
                 ) : (
                   <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1 ? "Create" : "Next"}
+                    {completedSteps() === totalSteps() - 1
+                      ? "Create"
+                      : "Complete"}
                   </Button>
                 ))}
             </Box>
