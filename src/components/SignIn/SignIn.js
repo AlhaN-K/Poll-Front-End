@@ -1,11 +1,13 @@
 import "./SignIn.css";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
 const url = "http://localhost:3000/login";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameErr, setUsernameErr] = useState("");
@@ -17,7 +19,7 @@ const SignIn = () => {
     username: username,
     password: password,
   };
-  const setAuthToken = (token) => {
+  const setAuthHeader = (token) => {
     if (token) {
       axios.defaults.headers.common["authorization"] = `Bearer ${token}`;
     } else {
@@ -27,40 +29,35 @@ const SignIn = () => {
 
   // Login form validation
   const login = async () => {
-    try {
-      setUsernameErr("");
-      setPasswordErr("");
-      if (username === "" || password === "") {
-        setUsernameErr("Username is a required field.");
-        setPasswordErr("Password is a required field.");
-      }
-      // validates the username & password from backend
-      setIncorrectUsername("");
-      setIncorrectPassword("");
-      // if (username !== response.data.config.data.username) {
-      //   setIncorrectUsername("Invalid Username");
-      // } else if (password !== response.data.config.data.password) {
-      //   setIncorrectPassword("Invalid Password");
-      // }
-      const data = await axios
-        .post(url, loginPayload)
-        .then((response) => {
-          console.log(response);
-          if (username !== response.data.config.data.username) {
-            setIncorrectUsername("Invalid Username");
-          } else if (password !== response.data.config.data.password) {
-            setIncorrectPassword("Invalid Password");
-          } else {
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            setAuthToken(token);
-            return data;
-          }
-        })
-        .catch((error) => console.log("error :>> ", error));
-    } catch (err) {
-      console.log("err :>> ", err);
+    setUsernameErr("");
+    setPasswordErr("");
+    if (username === "" || password === "") {
+      setUsernameErr("Username is a required field.");
+      setPasswordErr("Password is a required field.");
     }
+    setIncorrectUsername("");
+    setIncorrectPassword("");
+    const data = await axios
+      .post(url, loginPayload)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 401) {
+          setIncorrectUsername("Invalid Username");
+          setIncorrectPassword("Invalid Password");
+        } else {
+          const token = response.data.token;
+          if (token) {
+            localStorage.setItem("token", token);
+            setAuthHeader(token);
+            navigate("/pollList");
+          } else {
+            setUsername("");
+            setPassword("");
+          }
+          return data;
+        }
+      })
+      .catch((error) => console.log("error :>> ", error));
   };
   return (
     <>
@@ -84,7 +81,7 @@ const SignIn = () => {
           <span>
             {" "}
             {username === "" ? usernameErr : ""}
-            {username !== loginPayload.username ? incorrectUsername : ""}
+            {incorrectUsername}
           </span>
         </div>
 
@@ -104,7 +101,7 @@ const SignIn = () => {
         <div className="inputError">
           <span>
             {password === "" ? passwordErr : ""}
-            {password !== loginPayload.password ? incorrectPassword : ""}
+            {incorrectPassword}
           </span>
         </div>
 
