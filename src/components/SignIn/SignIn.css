@@ -36,6 +36,11 @@ form {
   position: relative;
   padding: 10px;
 }
+.userPassError {
+  color: red;
+  display: flex;
+  justify-content: center;
+}
 .inputError {
   color: red;
   font-size: small;
