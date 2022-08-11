@@ -1,6 +1,6 @@
 import "./Stepper.css";
 import React, { useState } from "react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -8,6 +8,7 @@ import StepButton from "@mui/material/StepButton";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import axios from "axios";
 
 const steps = ["Title & Description", "Options", "Get Link"];
 
@@ -18,14 +19,16 @@ export default function CreatePollStepper() {
   const [descriptionError, setDescriptionError] = useState("");
   const [options, setOptions] = useState([""]);
   const [optionsError, setOptionsError] = useState("");
+  const [link, setLink] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
 
   const handleInputChange = (value, index) => {
-    options[index] = value;
-    setOptions(options);
+    const optionsCopy = options.slice();
+    optionsCopy[index] = value;
+    setOptions(optionsCopy);
   };
   const totalSteps = () => {
     return steps.length;
@@ -50,9 +53,11 @@ export default function CreatePollStepper() {
     if (title === "" || description === "") {
       setTitleError("Title is a required field.");
       setDescriptionError("Description is a required field.");
-      setActiveStep();
-    } else if (options === "") {
+      return;
+    } else if (options.length) {
+      //todo
       setOptionsError("Please set an option");
+      return;
     }
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
@@ -139,8 +144,8 @@ export default function CreatePollStepper() {
                   <TextField
                     style={{ width: "100%" }}
                     required
-                    value={currentOption[index]}
-                    onChange={(e) => handleInputChange(e.target.value)}
+                    value={currentOption}
+                    onChange={(e) => handleInputChange(e.target.value, index)}
                     id="filled-required"
                     label=""
                     variant="outlined"
@@ -187,8 +192,8 @@ export default function CreatePollStepper() {
                 <h4> The link to your poll is:</h4>
                 <TextField
                   style={{ width: "100%" }}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
                   id="filled-required"
                   label=""
                   variant="outlined"
@@ -246,11 +251,14 @@ export default function CreatePollStepper() {
                     Step {activeStep + 1} already completed
                   </Typography>
                 ) : (
-                  <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1
-                      ? "Create"
-                      : "Complete"}
-                  </Button>
+                  <Link to={"/poll"}>
+                    {" "}
+                    <Button onClick={handleComplete}>
+                      {completedSteps() === totalSteps() - 1
+                        ? "Create"
+                        : "Complete"}
+                    </Button>
+                  </Link>
                 ))}
             </Box>
           </React.Fragment>
