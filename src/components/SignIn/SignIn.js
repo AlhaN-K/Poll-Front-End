@@ -12,8 +12,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [usernameErr, setUsernameErr] = useState("");
   const [passwordErr, setPasswordErr] = useState("");
-  const [incorrectUsername, setIncorrectUsername] = useState("");
-  const [incorrectPassword, setIncorrectPassword] = useState("");
+  const [incorrectUserPass, setIncorrectUserPass] = useState("");
 
   const loginPayload = {
     username: username,
@@ -34,30 +33,29 @@ const SignIn = () => {
     if (username === "" || password === "") {
       setUsernameErr("Username is a required field.");
       setPasswordErr("Password is a required field.");
+      return;
     }
-    setIncorrectUsername("");
-    setIncorrectPassword("");
+    setIncorrectUserPass("");
     const data = await axios
       .post(url, loginPayload)
       .then((response) => {
         console.log(response);
-        if (response.status === 401) {
-          setIncorrectUsername("Invalid Username");
-          setIncorrectPassword("Invalid Password");
+        const token = response.data.token;
+        if (token) {
+          localStorage.setItem("token", token);
+          setAuthHeader(token);
+          navigate("/pollList");
         } else {
-          const token = response.data.token;
-          if (token) {
-            localStorage.setItem("token", token);
-            setAuthHeader(token);
-            navigate("/pollList");
-          } else {
-            setUsername("");
-            setPassword("");
-          }
-          return data;
+          setUsername("");
+          setPassword("");
         }
+        return data;
       })
-      .catch((error) => console.log("error :>> ", error));
+      .catch((error) => {
+        if (error.response.status === 401) {
+          setIncorrectUserPass("Invalid Username/Password");
+        }
+      });
   };
   return (
     <>
@@ -65,6 +63,7 @@ const SignIn = () => {
         <h1>Sign-In to your account</h1>
       </div>
       <form>
+        <span className="userPassError">{incorrectUserPass}</span>
         <div className="group-Input">
           <h4>Enter your username:</h4>
           <TextField
@@ -78,11 +77,7 @@ const SignIn = () => {
           />
         </div>
         <div className="inputError">
-          <span>
-            {" "}
-            {username === "" ? usernameErr : ""}
-            {incorrectUsername}
-          </span>
+          <span> {username === "" ? usernameErr : ""}</span>
         </div>
 
         <div className="group-Input">
@@ -99,10 +94,7 @@ const SignIn = () => {
           />
         </div>
         <div className="inputError">
-          <span>
-            {password === "" ? passwordErr : ""}
-            {incorrectPassword}
-          </span>
+          <span>{password === "" ? passwordErr : ""}</span>
         </div>
 
         <Button
