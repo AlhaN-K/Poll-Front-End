@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 export default function Header() {
+  const token = localStorage.getItem("token");
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar style={{ backgroundColor: "#232127" }} position="static">
@@ -29,9 +30,15 @@ export default function Header() {
             style={{ fontWeight: "bold", border: "1px solid" }}
             color="inherit"
           >
-            <Link to={"/signin"} style={{ color: "white" }}>
-              My Polls
-            </Link>
+            {token ? (
+              <Link to={"/pollList"} style={{ color: "white" }}>
+                My Polls
+              </Link>
+            ) : (
+              <Link to={"/signin"} style={{ color: "white" }}>
+                My Polls
+              </Link>
+            )}
           </Button>
         </Toolbar>
       </AppBar>
