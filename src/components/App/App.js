@@ -8,6 +8,7 @@ import SignIn from "../SignIn/SignIn";
 import Stepper from "../CreatePoll/Stepper";
 import PollList from "../PollList/PollList";
 import PollPage from "../PollPage/PollPage";
+import PollManager from "../PollManager/PollManager";
 const App = () => {
   return (
     <>
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/createPoll" element={<Stepper />} />
           <Route path="/pollList" element={<PollList />} />
           <Route path="/poll" element={<PollPage />} />
+          <Route path="/manage" element={<PollManager />} />
         </Routes>
       </Router>
       <Footer />
