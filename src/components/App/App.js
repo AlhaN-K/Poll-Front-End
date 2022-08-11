@@ -7,7 +7,7 @@ import Home from "..//HomePage/HomePage";
 import SignIn from "../SignIn/SignIn";
 import Stepper from "../CreatePoll/Stepper";
 import PollList from "../PollList/PollList";
-
+import PollPage from "../PollPage/PollPage";
 const App = () => {
   return (
     <>
@@ -19,6 +19,7 @@ const App = () => {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/createPoll" element={<Stepper />} />
           <Route path="/pollList" element={<PollList />} />
+          <Route path="/poll" element={<PollPage />} />
         </Routes>
       </Router>
       <Footer />
