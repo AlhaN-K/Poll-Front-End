@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -8,7 +8,13 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 export default function Header() {
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+    window.location.reload();
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar style={{ backgroundColor: "#232127" }} position="static">
@@ -26,6 +32,19 @@ export default function Header() {
               Pollymar
             </Link>
           </Typography>
+          {token ? (
+            <Button
+              style={{
+                fontWeight: "bold",
+                border: "1px solid",
+                marginRight: "5px",
+              }}
+              color="error"
+              onClick={logout}
+            >
+              Logout
+            </Button>
+          ) : null}
           <Button
             style={{ fontWeight: "bold", border: "1px solid" }}
             color="inherit"
