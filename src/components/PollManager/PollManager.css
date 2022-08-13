@@ -1,0 +1,16 @@
+.dashboard {
+  padding: 20px;
+  margin: 5px;
+  background-color: #7979c6;
+  height: 60px;
+  width: 100%;
+}
+.edit {
+  cursor: pointer;
+  font-size: large;
+  font-weight: bold;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+.title-desc {
+  padding-left: 10px;
+}
