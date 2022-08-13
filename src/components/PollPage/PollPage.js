@@ -1,3 +1,4 @@
+import "./PollPage.css";
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -16,7 +17,7 @@ import FormControl from "@mui/material/FormControl";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#292950",
+    backgroundColor: "black",
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -66,6 +67,10 @@ export default function PollPage() {
   };
   return (
     <div style={{ padding: "20px" }}>
+      <div className="title-desc-style">
+        <h1>Title:</h1>
+        <h3>Description:</h3>
+      </div>
       <TableContainer
         component={Paper}
         sx={{ marginTop: "50px", marginBottom: "10px" }}
@@ -145,7 +150,7 @@ export default function PollPage() {
         size="medium"
         onClick={addNames}
       >
-        Submit
+        Add
       </Button>
     </div>
   );
