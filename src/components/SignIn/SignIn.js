@@ -44,7 +44,7 @@ const SignIn = () => {
         if (token) {
           localStorage.setItem("token", token);
           setAuthHeader(token);
-          navigate("/pollList");
+          navigate("/");
         } else {
           setUsername("");
           setPassword("");
