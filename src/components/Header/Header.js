@@ -12,7 +12,7 @@ export default function Header() {
   const token = localStorage.getItem("token");
   const logout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    navigate("/signin");
     window.location.reload();
   };
   return (
@@ -55,7 +55,7 @@ export default function Header() {
               </Link>
             ) : (
               <Link to={"/signin"} style={{ color: "white" }}>
-                My Polls
+                Sign-in
               </Link>
             )}
           </Button>
