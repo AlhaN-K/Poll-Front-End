@@ -1,9 +1,9 @@
 import "./HomePage.css";
 import poll from "../../imgs/poll.svg";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Home = () => {
-  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   return (
     <>
       <main className="main">
@@ -16,8 +16,18 @@ const Home = () => {
               works best for your event.
             </p>
 
-            <div className="btn btn-lg" onClick={() => navigate("createPoll")}>
-              Create Poll
+            <div className="btn btn-lg">
+              {token ? (
+                <Link to={"/createpoll"} style={{ color: "white" }}>
+                  {" "}
+                  Create Poll
+                </Link>
+              ) : (
+                <Link to={"/signin"} style={{ color: "white" }}>
+                  {" "}
+                  Create Poll
+                </Link>
+              )}
             </div>
           </div>
           <div className="landing-image">
@@ -58,8 +68,7 @@ const Home = () => {
                   <div className="feature-details">
                     <h3>Unlimited</h3>
                     <p>
-                      Create as many polls as you want. Invite as many
-                      participants as you want.
+                      Create as many polls as you want and share it with others.
                     </p>
                   </div>
                 </div>
