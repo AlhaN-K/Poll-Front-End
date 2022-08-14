@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
-const PollCard = ({ onRemove, pollNumber }) => {
+const PollCard = ({ onRemove, title }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -62,13 +62,10 @@ const PollCard = ({ onRemove, pollNumber }) => {
               <Typography
                 gutterBottom
                 variant="h5"
-                component="div"
+                component="header"
                 color="plum"
               >
-                Poll {pollNumber}:
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                Title:
+                {title}
               </Typography>
               <Typography gutterBottom fontSize="18px" component="div">
                 Participants:
