@@ -9,8 +9,10 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
+const pollURL = "http://localhost:3003/polls";
+const itemsURL = "http://localhost:3003/pollItems";
 
-const steps = ["Title & Description", "Options", "Get Link"];
+const steps = ["Title & Description", "Options"];
 
 export default function CreatePollStepper() {
   const [title, setTitle] = useState("");
@@ -19,12 +21,64 @@ export default function CreatePollStepper() {
   const [descriptionError, setDescriptionError] = useState("");
   const [options, setOptions] = useState([""]);
   const [optionsError, setOptionsError] = useState("");
-  const [link, setLink] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
 
+  const createPoll = () => {
+    const token = localStorage.getItem("token");
+    let pollData = JSON.stringify({
+      title: title,
+      description: description,
+      link: "http:/xsdft/4585",
+    });
+
+    let pollConfig = {
+      method: "post",
+      url: pollURL,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: pollData,
+    };
+    axios(pollConfig)
+      .then((response) => {
+        createItems(response.data.insertId);
+      })
+      .catch((error) => {
+        console.log("error :>> ", error);
+      });
+  };
+  const createItems = (insertId) => {
+    const token = localStorage.getItem("token");
+    let itemData = JSON.stringify([
+      {
+        poll_id: insertId,
+        item_text: options,
+      },
+    ]);
+
+    let itemConfig = {
+      method: "post",
+      url: itemsURL,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: itemData,
+    };
+    axios(itemConfig)
+      .then((secResponse) => {
+        console.log("secResponse :>> ", secResponse);
+      })
+      .catch((secErr) => {
+        console.log("secErr :>> ", secErr);
+      });
+  };
+
+  // **************************************************************
   const handleInputChange = (value, index) => {
     const optionsCopy = options.slice();
     optionsCopy[index] = value;
@@ -54,11 +108,14 @@ export default function CreatePollStepper() {
       setTitleError("Title is a required field.");
       setDescriptionError("Description is a required field.");
       return;
-    } else if (options.length) {
-      //todo
-      setOptionsError("Please set an option");
-      return;
     }
+    options.forEach((option, index) => {
+      if (options[index] === null) {
+        setOptionsError("Please set an option");
+        return;
+      }
+    });
+
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? steps.findIndex((step, i) => !(i in completed))
@@ -137,6 +194,9 @@ export default function CreatePollStepper() {
         )}
         {activeStep === 1 && (
           <form>
+            <center>
+              <h3>Please set an option!</h3>
+            </center>
             {options.map((currentOption, index) => {
               return (
                 <div className="group" key={index}>
@@ -151,7 +211,7 @@ export default function CreatePollStepper() {
                     variant="outlined"
                   />
                   <div className="inputValidation">
-                    <span>{options === "" ? optionsError : ""} </span>
+                    <span>{options[index] === null ? optionsError : ""} </span>
                   </div>{" "}
                 </div>
               );
@@ -183,29 +243,10 @@ export default function CreatePollStepper() {
                 +
               </Button>
             </div>
+            <Button onClick={createPoll}>Create poll</Button>
           </form>
         )}
-        {activeStep === 2 && (
-          <>
-            <form>
-              <div className="group">
-                <h4> The link to your poll is:</h4>
-                <TextField
-                  style={{ width: "100%" }}
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  id="filled-required"
-                  label=""
-                  variant="outlined"
-                />
-                <small style={{ color: "gray", fontSize: "11px" }}>
-                  Everybody who has this link can participate in your poll - no
-                  sign-in required.
-                </small>
-              </div>
-            </form>
-          </>
-        )}
+
         {allStepsCompleted() ? (
           <React.Fragment>
             {" "}
@@ -252,7 +293,6 @@ export default function CreatePollStepper() {
                   </Typography>
                 ) : (
                   <Link to={"/poll"}>
-                    {" "}
                     <Button onClick={handleComplete}>
                       {completedSteps() === totalSteps() - 1
                         ? "Create"
