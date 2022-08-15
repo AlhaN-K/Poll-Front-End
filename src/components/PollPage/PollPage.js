@@ -10,10 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
+import Checkbox from "@mui/material/Checkbox";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,9 +31,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function PollPage() {
-  const [names, setNames] = useState(["Participant1"]);
+  const [rows, setRows] = useState([""]);
   const [choices, setChoices] = useState(["", ""]);
   const [options, setOptions] = useState(["", ""]);
   const [inputErr, setInputErr] = useState("");
@@ -52,24 +50,25 @@ export default function PollPage() {
   };
 
   const handleInput = (value, index) => {
-    const namesCopy = names.slice();
-    namesCopy[index] = value;
-    setNames(namesCopy);
+    const rowsCopy = rows.slice();
+    rowsCopy[index] = value;
+    setRows(rowsCopy);
   };
 
-  const addNames = () => {
+  const addRows = () => {
     setInputErr("");
     //todo
-    if (names.length) {
+    if (rows.length) {
       setInputErr("Please enter your name!");
     }
-    setNames(names.concat(""));
+    setRows(rows.concat(""));
   };
   return (
     <div style={{ padding: "20px" }}>
       <div className="title-desc-style">
         <h1>Title:</h1>
         <h3>Description:</h3>
+        <h4>Poll Link:</h4>
       </div>
       <TableContainer
         component={Paper}
@@ -93,7 +92,7 @@ export default function PollPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {names.map((name, index) => (
+            {rows.map((name, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   <TextField
@@ -117,25 +116,12 @@ export default function PollPage() {
                 {choices.map((choice, index) => {
                   return (
                     <StyledTableCell align="center" key={index}>
-                      <FormControl>
-                        <RadioGroup
-                          aria-labelledby="demo-controlled-radio-buttons-group"
-                          name="controlled-radio-buttons-group"
-                          value={choice}
-                          onChange={(e) => handleChoices(e.target.value, index)}
-                        >
-                          <FormControlLabel
-                            value="yes"
-                            control={<Radio color="success" value={choice} />}
-                            label="Y"
-                          />
-                          <FormControlLabel
-                            value="no"
-                            control={<Radio color="error" value={choice} />}
-                            label="N"
-                          />
-                        </RadioGroup>
-                      </FormControl>
+                      {" "}
+                      <Checkbox
+                        {...label}
+                        value={choice}
+                        onChange={(e) => handleChoices(e.target.value, index)}
+                      />
                     </StyledTableCell>
                   );
                 })}
@@ -148,7 +134,7 @@ export default function PollPage() {
         variant="contained"
         color="inherit"
         size="medium"
-        onClick={addNames}
+        onClick={addRows}
       >
         Add
       </Button>
