@@ -1,6 +1,5 @@
 import "./PollList.css";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -11,8 +10,7 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
-const PollCard = ({ onRemove, title }) => {
-  const navigate = useNavigate();
+const PollCard = ({ onRemove, onManage, title }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -52,9 +50,7 @@ const PollCard = ({ onRemove, title }) => {
               }}
             >
               <MenuItem onClick={onRemove}>Delete</MenuItem>
-              <MenuItem onClick={() => navigate("/manage")}>
-                Manage Poll
-              </MenuItem>
+              <MenuItem onClick={onManage}>Manage Poll</MenuItem>
             </Menu>
           </div>
           <CardActionArea>

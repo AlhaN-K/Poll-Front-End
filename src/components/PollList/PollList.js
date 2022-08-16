@@ -9,12 +9,47 @@ export default function PollList() {
   const navigate = useNavigate();
   const [polls, setPolls] = useState([]);
 
-  const removePoll = (currentPoll) => {
-    setPolls(polls.filter((poll) => poll !== currentPoll));
+  const token = localStorage.getItem("token");
+
+  const deletePoll = (id) => {
+    axios
+      .delete(`http://localhost:3003/polls/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        return axios.get(`http://localhost:3003/polls`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
+      })
+      .then((res) => {
+        setPolls(res.data);
+      })
+      .catch((err) => {
+        console.log("err :>> ", err);
+      });
   };
+
+  const managePoll = (id) => {
+    axios
+      .get(`http://localhost:3003/polls/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setPolls(res.data);
+        navigate("/manage");
+      })
+      .catch((err) => {
+        console.log("err :>> ", err);
+      });
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    // (async () => {
     axios
       .get("http://localhost:3003/polls", {
         headers: {
@@ -29,8 +64,7 @@ export default function PollList() {
         console.log("error :>> ", error);
       });
     return () => {};
-    // })();
-  }, []);
+  }, [token]);
   return (
     <div>
       <div className="btn-container">
@@ -47,8 +81,9 @@ export default function PollList() {
         return (
           <Card
             key={poll.ID}
-            onRemove={() => removePoll(poll)}
             title={poll.title}
+            onRemove={() => deletePoll(poll.ID)}
+            onManage={() => managePoll(poll.ID)}
           />
         );
       })}
