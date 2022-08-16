@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
-const PollCard = ({ onRemove, onManage, title }) => {
+const PollCard = ({ onRemove, onManage, title, link }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -67,7 +67,11 @@ const PollCard = ({ onRemove, onManage, title }) => {
                 Participants:
               </Typography>
               <Typography gutterBottom fontSize="18px" component="div">
-                Link: <input className="link-input"></input>
+                Link:
+                <input
+                  className="link-input"
+                  defaultValue={`${window.location.host}/polls/${link}`}
+                ></input>
               </Typography>
             </CardContent>
           </CardActionArea>

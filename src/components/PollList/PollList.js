@@ -82,6 +82,7 @@ export default function PollList() {
           <Card
             key={poll.ID}
             title={poll.title}
+            link={poll.ID}
             onRemove={() => deletePoll(poll.ID)}
             onManage={() => managePoll(poll.ID)}
           />
