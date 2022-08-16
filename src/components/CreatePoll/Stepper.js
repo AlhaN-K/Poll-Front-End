@@ -22,22 +22,16 @@ export default function CreatePollStepper() {
   const [options, setOptions] = useState([""]);
   const [optionsError, setOptionsError] = useState("");
   const [activeStep, setActiveStep] = useState(0);
-  const [link, setLink] = useState("");
+
   const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
-
-  // Create Unique link
-  const createUniqueLink = (id) => {
-    return `http://localhost:3003/polls/${id}`;
-  };
   // Create poll request
   const createPoll = () => {
     const token = localStorage.getItem("token");
     let pollData = JSON.stringify({
       title: title,
       description: description,
-      link: link,
     });
 
     let pollConfig = {
@@ -53,8 +47,6 @@ export default function CreatePollStepper() {
       .then((response) => {
         const pollId = response.data.insertId;
         createItems(pollId);
-        const uniqueLink = createUniqueLink(pollId + 1);
-        setLink(uniqueLink);
       })
       .catch((error) => {
         console.log("error :>> ", error);
