@@ -1,5 +1,6 @@
 import "./PollPage.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,6 +12,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,10 +36,155 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function PollPage() {
-  const [rows, setRows] = useState([""]);
-  const [choices, setChoices] = useState(["", ""]);
-  const [options, setOptions] = useState(["", ""]);
+  const [poll, setPoll] = useState();
+  const [names, setNames] = useState([]);
+  const [choices, setChoices] = useState([""]);
+  const [options, setOptions] = useState([""]);
   const [inputErr, setInputErr] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  let { id } = useParams();
+
+  // loading poll data
+  useEffect(() => {
+    const getPolls = () => {
+      axios
+        .get(`http://localhost:3003/polls/${id}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("get poll :>> ", response);
+          setPoll(response.data);
+          // createParticipant(response.data.ID);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getParticipants = () => {
+      axios
+        .get(`http://localhost:3003/participants`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("get participants :>> ", response);
+          setNames(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getOptions = () => {
+      axios
+        .get(`http://localhost:3003/pollItems`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("get items :>> ", response);
+          setOptions(response.data);
+          // createChoices(response.data.ID);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getChoices = () => {
+      axios
+        .get(`http://localhost:3003/choices`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("get choices :>> ", response);
+          setChoices(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    getPolls();
+    getParticipants();
+    getOptions();
+    getChoices();
+    return () => {};
+  }, [id, token]);
+
+  // create participant
+  const createParticipant = (pollId) => {
+    const data = JSON.stringify({
+      poll_id: pollId,
+      name: names,
+    });
+    let particConfig = {
+      method: "post",
+      url: "http://localhost:3003/participants",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: data,
+    };
+    axios(particConfig)
+      .then((response) => {
+        console.log("response :>> ", response);
+        setNames(response.data);
+        setChoices(response.data.ID);
+      })
+      .then(() => {
+        return axios.get(`http://localhost:3003/participants`);
+      })
+      .catch((error) => {
+        console.log("error :>> ", error);
+      });
+  };
+
+  // Create choices
+  const createChoices = (itemId, participantId) => {
+    const data = JSON.stringify({
+      item_id: itemId,
+      participant_id: participantId,
+    });
+    let particConfig = {
+      method: "post",
+      url: "http://localhost:3003/participants",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: data,
+    };
+    axios(particConfig)
+      .then((response) => {
+        console.log("response :>> ", response);
+        setNames(response.data);
+      })
+      .then(() => {
+        return axios.get(`http://localhost:3003/participants`);
+      })
+      .catch((error) => {
+        console.log("error :>> ", error);
+      });
+  };
+
+  // Add to rows
+  const newRow = () => {
+    setInputErr("");
+    names.forEach((name, index) => {
+      if (name[index].length === null) {
+        setInputErr("Please enter your name!");
+        return;
+      }
+    });
+    setNames(names.concat(""));
+  };
 
   const handleChoices = (value, index) => {
     choices[index] = value;
@@ -50,23 +197,15 @@ export default function PollPage() {
   };
 
   const handleInput = (value, index) => {
-    const rowsCopy = rows.slice();
-    rowsCopy[index] = value;
-    setRows(rowsCopy);
+    const namesCopy = names.slice();
+    namesCopy[index] = value;
+    setNames(namesCopy);
   };
 
-  const addRows = () => {
-    setInputErr("");
-    //todo
-    if (rows.length) {
-      setInputErr("Please enter your name!");
-    }
-    setRows(rows.concat(""));
-  };
   return (
     <div style={{ padding: "20px" }}>
       <div className="title-desc-style">
-        <h1>Title:</h1>
+        <h1>Title: </h1>
         <h3>Description:</h3>
         <h4>Poll Link:</h4>
       </div>
@@ -82,21 +221,21 @@ export default function PollPage() {
                 return (
                   <StyledTableCell
                     align="center"
-                    key={index}
+                    key={option.ID}
                     onChange={(e) => handleOptions(e.target.value, index)}
                   >
-                    Option {index + 1}
+                    {option.item_text}
                   </StyledTableCell>
                 );
               })}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((name, index) => (
+            {names.map((name, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   <TextField
-                    value={name}
+                    value={name.name}
                     onChange={(e) => handleInput(e.target.value, index)}
                     sx={{ width: "200px" }}
                     size="small"
@@ -131,12 +270,21 @@ export default function PollPage() {
         </Table>
       </TableContainer>
       <Button
+        style={{ marginRight: "5px" }}
         variant="contained"
         color="inherit"
         size="medium"
-        onClick={addRows}
+        onClick={createParticipant}
       >
-        Add
+        Submit
+      </Button>
+      <Button
+        variant="contained"
+        color="inherit"
+        size="medium"
+        onClick={newRow}
+      >
+        New
       </Button>
     </div>
   );
