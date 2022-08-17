@@ -1,5 +1,6 @@
 import "./PollManager.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,6 +12,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,10 +36,83 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function PollPage() {
-  const [names, setNames] = useState(["Participant1", "Participant2"]);
+  const [poll, setPoll] = useState();
+  const [names, setNames] = useState([]);
   const [choices, setChoices] = useState(["", ""]);
-  const [options, setOptions] = useState(["", ""]);
+  const [options, setOptions] = useState([]);
   const [inputErr, setInputErr] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  let { id } = useParams();
+
+  useEffect(() => {
+    const getPolls = () => {
+      axios
+        .get(`http://localhost:3003/polls/${id}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("response :>> ", response);
+          setPoll(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getParticipants = () => {
+      axios
+        .get(`http://localhost:3003/participants`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("response :>> ", response);
+          setNames(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getOptions = () => {
+      axios
+        .get(`http://localhost:3003/pollItems`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("response :>> ", response);
+          setOptions(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    const getChoices = () => {
+      axios
+        .get(`http://localhost:3003/choices`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("response :>> ", response);
+          setChoices(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    getPolls();
+    getParticipants();
+    getOptions();
+    getChoices();
+    return () => {};
+  }, [id, token]);
 
   const handleChoices = (value, index) => {
     choices[index] = value;
@@ -66,8 +141,8 @@ export default function PollPage() {
   return (
     <div style={{ padding: "20px" }}>
       <div className="title-desc">
-        <h1>Title:</h1>
-        <h3>Description:</h3>
+        <h1>Title: </h1>
+        <h3>Description: </h3>
       </div>
       <div className="dashboard">
         <span className="edit" /*onClick={addNames}*/>Edit Poll</span>
@@ -87,7 +162,7 @@ export default function PollPage() {
                     key={index}
                     onChange={(e) => handleOptions(e.target.value, index)}
                   >
-                    Option {index + 1}
+                    {option.item_text}
                   </StyledTableCell>
                 );
               })}
@@ -98,7 +173,7 @@ export default function PollPage() {
               <StyledTableRow key={index}>
                 <StyledTableCell component="th" scope="row">
                   <TextField
-                    value={name}
+                    value={name.name}
                     onChange={(e) => handleInput(e.target.value, index)}
                     sx={{ width: "200px" }}
                     size="small"
@@ -120,7 +195,7 @@ export default function PollPage() {
                     <StyledTableCell align="center" key={index}>
                       <Checkbox
                         {...label}
-                        value={choice}
+                        value={choice.item_id}
                         onChange={(e) => handleChoices(e.target.value, index)}
                       />
                     </StyledTableCell>
