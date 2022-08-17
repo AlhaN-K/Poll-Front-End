@@ -8,7 +8,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
-
 const ITEM_HEIGHT = 48;
 const PollCard = ({ onRemove, onManage, title, link }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -69,6 +68,7 @@ const PollCard = ({ onRemove, onManage, title, link }) => {
               <Typography gutterBottom fontSize="18px" component="div">
                 Link:
                 <input
+                  readOnly={true}
                   className="link-input"
                   defaultValue={`${window.location.host}/polls/${link}`}
                 ></input>
