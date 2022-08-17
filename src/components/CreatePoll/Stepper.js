@@ -21,11 +21,13 @@ export default function CreatePollStepper() {
   const [descriptionError, setDescriptionError] = useState("");
   const [options, setOptions] = useState([""]);
   const [optionsError, setOptionsError] = useState("");
+  const [errCreate, setErrCreate] = useState();
   const [activeStep, setActiveStep] = useState(0);
 
   const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
+
   // Create poll request
   const createPoll = () => {
     const token = localStorage.getItem("token");
@@ -49,6 +51,12 @@ export default function CreatePollStepper() {
         createItems(pollId);
       })
       .catch((error) => {
+        if (error.response.status === 400) {
+          setErrCreate("Something went wrong! Please Try again");
+          return;
+        } else {
+          <Link to={"/poll"}></Link>;
+        }
         console.log("error :>> ", error);
       });
   };
@@ -56,12 +64,12 @@ export default function CreatePollStepper() {
   // Create items request
   const createItems = (insertId) => {
     const token = localStorage.getItem("token");
-    let itemData = JSON.stringify([
-      {
+    const itemData = options.map((item, index) => {
+      return {
         poll_id: insertId,
-        item_text: options,
-      },
-    ]);
+        item_text: options[index],
+      };
+    });
 
     let itemConfig = {
       method: "post",
@@ -76,8 +84,12 @@ export default function CreatePollStepper() {
       .then((secResponse) => {
         console.log("secResponse :>> ", secResponse);
       })
-      .catch((secErr) => {
-        console.log("secErr :>> ", secErr);
+      .catch((error) => {
+        if (error.response.status === 400) {
+          setErrCreate("Something went wrong! Please Try again");
+          return;
+        }
+        console.log("secErr :>> ", error);
       });
   };
 
@@ -112,7 +124,7 @@ export default function CreatePollStepper() {
       return;
     }
     options.forEach((option, index) => {
-      if (options[index] === null) {
+      if (option[index].length === null) {
         setOptionsError("Please set an option");
         return;
       }
@@ -131,13 +143,6 @@ export default function CreatePollStepper() {
 
   const handleStep = (step) => () => {
     setActiveStep(step);
-  };
-
-  const handleComplete = () => {
-    handleNext();
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
   };
 
   const handleReset = () => {
@@ -195,58 +200,63 @@ export default function CreatePollStepper() {
           </form>
         )}
         {activeStep === 1 && (
-          <form>
-            <center>
-              <h3>Please set an option!</h3>
-            </center>
-            {options.map((currentOption, index) => {
-              return (
-                <div className="group" key={index}>
-                  <h4>Option {index + 1}:</h4>
-                  <TextField
-                    style={{ width: "100%" }}
-                    required
-                    value={currentOption}
-                    onChange={(e) => handleInputChange(e.target.value, index)}
-                    id="filled-required"
-                    label=""
-                    variant="outlined"
-                  />
-                  <div className="inputValidation">
-                    <span>{options[index] === null ? optionsError : ""} </span>
-                  </div>{" "}
-                </div>
-              );
-            })}
-            <div className="addRemoveBtn">
-              <Button
-                style={{
-                  width: "10%",
-                  fontWeight: "bold",
-                  fontSize: "18px",
-                  borderWidth: "2px",
-                }}
-                variant="outlined"
-                onClick={removeOption}
-              >
-                -
-              </Button>
-              <Button
-                style={{
-                  width: "10%",
-                  fontWeight: "bold",
-                  fontSize: "18px",
-                  marginLeft: "5px",
-                  borderWidth: "2px",
-                }}
-                variant="outlined"
-                onClick={addOption}
-              >
-                +
-              </Button>
-            </div>
-            <Button onClick={createPoll}>Create poll</Button>
-          </form>
+          <>
+            <span className="userPassError">{errCreate}</span>
+            <form>
+              <center>
+                <h3>Please set an option!</h3>
+              </center>
+              {options.map((currentOption, index) => {
+                return (
+                  <div className="group" key={index}>
+                    <h4>Option {index + 1}:</h4>
+                    <TextField
+                      style={{ width: "100%" }}
+                      required
+                      value={currentOption}
+                      onChange={(e) => handleInputChange(e.target.value, index)}
+                      id="filled-required"
+                      label=""
+                      variant="outlined"
+                    />
+                    <div className="inputValidation">
+                      <span>
+                        {options[index] === null ? optionsError : ""}{" "}
+                      </span>
+                    </div>{" "}
+                  </div>
+                );
+              })}
+              <div className="addRemoveBtn">
+                <Button
+                  style={{
+                    width: "10%",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                    borderWidth: "2px",
+                  }}
+                  variant="outlined"
+                  onClick={removeOption}
+                >
+                  -
+                </Button>
+                <Button
+                  style={{
+                    width: "10%",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                    marginLeft: "5px",
+                    borderWidth: "2px",
+                  }}
+                  variant="outlined"
+                  onClick={addOption}
+                >
+                  +
+                </Button>
+              </div>
+              <Button onClick={createPoll}>Create poll</Button>
+            </form>
+          </>
         )}
 
         {allStepsCompleted() ? (
@@ -282,7 +292,11 @@ export default function CreatePollStepper() {
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
+              <Button
+                disabled={isLastStep()}
+                onClick={handleNext}
+                sx={{ mr: 1 }}
+              >
                 Next
               </Button>
               {activeStep !== steps.length &&
@@ -295,10 +309,8 @@ export default function CreatePollStepper() {
                   </Typography>
                 ) : (
                   <Link to={"/poll"}>
-                    <Button onClick={handleComplete}>
-                      {completedSteps() === totalSteps() - 1
-                        ? "Create"
-                        : "Complete"}
+                    <Button disabled={!isLastStep()} /*onClick={createPoll}*/>
+                      Create
                     </Button>
                   </Link>
                 ))}
