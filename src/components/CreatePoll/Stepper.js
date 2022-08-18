@@ -1,6 +1,6 @@
 import "./Stepper.css";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
+
 const pollURL = "http://localhost:3003/polls";
 const itemsURL = "http://localhost:3003/pollItems";
 
@@ -19,7 +20,7 @@ export default function CreatePollStepper() {
   const [titleError, setTitleError] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
-  const [options, setOptions] = useState([""]);
+  const [options, setOptions] = useState([]);
   const [optionsError, setOptionsError] = useState("");
   const [errCreate, setErrCreate] = useState();
   const [activeStep, setActiveStep] = useState(0);
@@ -27,6 +28,7 @@ export default function CreatePollStepper() {
   const [completed, setCompleted] = useState({});
   const addOption = () => setOptions(options.concat(""));
   const removeOption = () => setOptions(options.slice(0, -1));
+  const navigate = useNavigate();
 
   // Create poll request
   const createPoll = () => {
@@ -45,20 +47,24 @@ export default function CreatePollStepper() {
       },
       data: pollData,
     };
-    axios(pollConfig)
-      .then((response) => {
-        const pollId = response.data.insertId;
-        createItems(pollId);
-      })
-      .catch((error) => {
-        if (error.response.status === 400) {
-          setErrCreate("Something went wrong! Please Try again");
-          return;
-        } else {
-          <Link to={"/poll"}></Link>;
-        }
-        console.log("error :>> ", error);
-      });
+    if (!options.length) {
+      setErrCreate("No option is set!");
+      return;
+    } else {
+      axios(pollConfig)
+        .then((response) => {
+          const pollId = response.data.insertId;
+          createItems(pollId);
+          navigate("/poll");
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+          if (error.response.status >= 400) {
+            setErrCreate("Something went wrong! Please Try again");
+            return;
+          }
+        });
+    }
   };
 
   // Create items request
@@ -123,12 +129,6 @@ export default function CreatePollStepper() {
       setDescriptionError("Description is a required field.");
       return;
     }
-    options.forEach((option, index) => {
-      if (option[index].length === null) {
-        setOptionsError("Please set an option");
-        return;
-      }
-    });
 
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
@@ -204,7 +204,7 @@ export default function CreatePollStepper() {
             <span className="userPassError">{errCreate}</span>
             <form>
               <center>
-                <h3>Please set an option!</h3>
+                <h3>Please set an option...</h3>
               </center>
               {options.map((currentOption, index) => {
                 return (
@@ -254,7 +254,6 @@ export default function CreatePollStepper() {
                   +
                 </Button>
               </div>
-              <Button onClick={createPoll}>Create poll</Button>
             </form>
           </>
         )}
@@ -308,11 +307,9 @@ export default function CreatePollStepper() {
                     Step {activeStep + 1} already completed
                   </Typography>
                 ) : (
-                  <Link to={"/poll"}>
-                    <Button disabled={!isLastStep()} /*onClick={createPoll}*/>
-                      Create
-                    </Button>
-                  </Link>
+                  <Button disabled={!isLastStep()} onClick={createPoll}>
+                    Create
+                  </Button>
                 ))}
             </Box>
           </React.Fragment>
