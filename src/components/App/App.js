@@ -20,8 +20,8 @@ const App = () => {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/createPoll" element={<Stepper />} />
           <Route path="/pollList" element={<PollList />} />
-          <Route path="/:id" element={<PollPage />} />
-          <Route path="/manage" element={<PollManager />} />
+          <Route path="/polls/:id" element={<PollPage />} />
+          <Route path="/manage/:id" element={<PollManager />} />
         </Routes>
       </Router>
       <Footer />
