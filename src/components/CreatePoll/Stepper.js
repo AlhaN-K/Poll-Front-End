@@ -55,7 +55,7 @@ export default function CreatePollStepper() {
         .then((response) => {
           const pollId = response.data.insertId;
           createItems(pollId);
-          navigate("/poll");
+          navigate(`/polls/${pollId}`);
         })
         .catch((error) => {
           console.log("error :>> ", error);
