@@ -9,9 +9,10 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
+import { BASE_URL } from "../../constants";
 
-const pollURL = "http://localhost:3003/polls";
-const itemsURL = "http://localhost:3003/pollItems";
+const pollURL = `http://${BASE_URL}/polls`;
+const itemsURL = `http://${BASE_URL}/pollItems`;
 
 const steps = ["Title & Description", "Options"];
 

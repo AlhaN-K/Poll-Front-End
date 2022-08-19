@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
-const url = "http://localhost:3003/login";
+import { BASE_URL } from "../../constants";
+
+const url = `http://${BASE_URL}/login`;
 
 const SignIn = () => {
   const navigate = useNavigate();

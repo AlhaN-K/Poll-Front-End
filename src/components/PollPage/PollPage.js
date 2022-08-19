@@ -13,6 +13,7 @@ import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
+import { BASE_URL } from "../../constants";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -50,7 +51,7 @@ export default function PollPage() {
   useEffect(() => {
     const getPolls = () => {
       axios
-        .get(`http://localhost:3003/polls/${id}`, {
+        .get(`http://${BASE_URL}/polls/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -65,7 +66,7 @@ export default function PollPage() {
     };
     const getParticipants = () => {
       axios
-        .get(`http://localhost:3003/participants/id/${id}`, {
+        .get(`http://${BASE_URL}/participants/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -80,7 +81,7 @@ export default function PollPage() {
     };
     const getOptions = () => {
       axios
-        .get(`http://localhost:3003/pollItems/id/${id}`, {
+        .get(`http://${BASE_URL}/pollItems/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -95,7 +96,7 @@ export default function PollPage() {
     };
     const getChoices = () => {
       axios
-        .get(`http://localhost:3003/choices/id/${id}`, {
+        .get(`http://${BASE_URL}/choices/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -123,7 +124,7 @@ export default function PollPage() {
     });
     let particConfig = {
       method: "post",
-      url: "http://localhost:3003/participants",
+      url: `http://${BASE_URL}/participants`,
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
@@ -137,7 +138,7 @@ export default function PollPage() {
         createChoices(response.data.insertId);
       })
       .then(() => {
-        return axios.get(`http://localhost:3003/participants`);
+        return axios.get(`http://${BASE_URL}/participants`);
       })
       .catch((error) => {
         console.log("participnt error :>> ", error);
@@ -152,7 +153,7 @@ export default function PollPage() {
     });
     let choiceConfig = {
       method: "post",
-      url: "http://localhost:3003/choices",
+      url: `http://${BASE_URL}/choices`,
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
@@ -165,7 +166,7 @@ export default function PollPage() {
         setChoices(response.data);
       })
       .then(() => {
-        return axios.get(`http://localhost:3003/choices`);
+        return axios.get(`http://${BASE_URL}/choices`);
       })
       .catch((error) => {
         console.log("choice error :>> ", error);
