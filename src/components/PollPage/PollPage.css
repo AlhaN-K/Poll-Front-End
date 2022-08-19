@@ -1,4 +1,7 @@
 .title-desc-style {
+  border: 1px solid rgb(174, 174, 174);
+  border-radius: 3px;
   padding: 5px 0 5px 5px;
   background-color: rgb(239, 239, 239);
+  padding-left: 10px;
 }

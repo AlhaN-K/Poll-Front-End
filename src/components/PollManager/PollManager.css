@@ -1,8 +1,8 @@
 .dashboard {
-  padding: 20px;
+  padding: 5px;
   margin: 5px;
   background-color: #7979c6;
-  height: 60px;
+  /* height: 10px; */
   width: 100%;
 }
 .edit {
