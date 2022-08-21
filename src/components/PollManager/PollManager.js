@@ -43,9 +43,8 @@ export default function PollPage() {
   const [choices, setChoices] = useState([]);
   const [options, setOptions] = useState([]);
   const [editTitle, setEditTitle] = useState();
-  console.log("editTitle :>> ", editTitle);
   const [editDesc, setEditDesc] = useState();
-  console.log("editDesc :>> ", editDesc);
+
   const token = localStorage.getItem("token");
 
   const { id } = useParams();
@@ -59,8 +58,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("poll data :>> ", response);
-
           setPoll(response.data);
         })
         .catch((error) => {
@@ -75,7 +72,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("response :>> ", response);
           setNames(response.data);
         })
         .catch((error) => {
@@ -90,7 +86,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("response :>> ", response);
           setOptions(response.data);
         })
         .catch((error) => {
@@ -105,7 +100,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("response :>> ", response);
           setChoices(response.data);
         })
         .catch((error) => {
@@ -135,8 +129,7 @@ export default function PollPage() {
     };
     axios(titleConfig)
       .then((response) => {
-        console.log("title response :>> ", response);
-        // setEditTitle(response.data);
+        return response;
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -148,7 +141,6 @@ export default function PollPage() {
     const descData = {
       description: editDesc,
     };
-    console.log("descData :>> ", descData);
     const descConfig = {
       method: "patch",
       url: `http://${BASE_URL}/polls/description/${id}`,
@@ -160,8 +152,7 @@ export default function PollPage() {
     };
     axios(descConfig)
       .then((response) => {
-        console.log("desc response :>> ", response);
-        setEditDesc(response.data);
+        return response;
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -188,19 +179,17 @@ export default function PollPage() {
     <div style={{ padding: "20px" }}>
       <div className="dashboard"></div>
       <div className="title-desc">
-        <h1>
+        <h1 onChange={(e) => setEditTitle(e.target.value)}>
           <EditText
             className="editable-input"
             defaultValue={poll && poll[0].title}
             onBlur={editedTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
           />
         </h1>
-        <h3>
+        <h3 onChange={(e) => setEditDesc(e.target.value)}>
           <EditText
             defaultValue={poll && poll[0].description}
             onSave={editedDescription}
-            onChange={(e) => setEditDesc(e.target.value)}
           />
         </h3>
       </div>
