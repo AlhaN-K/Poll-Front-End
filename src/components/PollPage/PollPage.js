@@ -14,6 +14,7 @@ import { Button } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
 import { BASE_URL } from "../../constants";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,15 +38,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function PollPage() {
+  const { id } = useParams();
+
   const [poll, setPoll] = useState();
   const [rows, setRows] = useState([]);
   const [names, setNames] = useState();
   const [choices, setChoices] = useState([]);
   const [options, setOptions] = useState([]);
+  const [copy, setCopy] = useState({
+    copied: false,
+    value: `${window.location.host}/polls/${id}`,
+  });
 
   const token = localStorage.getItem("token");
-
-  const { id } = useParams();
 
   // loading poll data
   useEffect(() => {
@@ -199,7 +204,19 @@ export default function PollPage() {
       <div className="title-desc-style">
         <h1>{poll && poll[0].title}</h1>
         <h3>{poll && poll[0].description}</h3>
-        <h4>{`${window.location.host}/polls/${poll && poll[0].ID}`}</h4>
+        <strong>Your Link: </strong>
+        <input
+          className="poll-link-input"
+          readOnly={true}
+          value={copy.value}
+          onChange={({ target: value }) => setCopy({ value, copied: false })}
+        ></input>
+        <CopyToClipboard
+          text={copy.value}
+          onCopy={() => setCopy({ copied: true })}
+        >
+          <Button>Copy</Button>
+        </CopyToClipboard>
       </div>
       <TableContainer
         component={Paper}

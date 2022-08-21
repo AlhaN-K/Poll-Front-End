@@ -7,10 +7,17 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { Button } from "@mui/material";
 import { CardActionArea } from "@mui/material";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+
 const ITEM_HEIGHT = 48;
-const PollCard = ({ onRemove, onManage, title, link }) => {
+const PollCard = ({ onRemove, onManage, title, link, total }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [copy, setCopy] = React.useState({
+    copied: false,
+    value: `${window.location.host}/polls/${link}`,
+  });
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,15 +70,24 @@ const PollCard = ({ onRemove, onManage, title, link }) => {
                 {title}
               </Typography>
               <Typography gutterBottom fontSize="18px" component="div">
-                Participants:
+                Participants:{total}
               </Typography>
               <Typography gutterBottom fontSize="18px" component="div">
                 Link:
                 <input
-                  readOnly={true}
+                  value={copy.value}
                   className="link-input"
-                  defaultValue={`${window.location.host}/polls/${link}`}
+                  readOnly={true}
+                  onChange={({ target: value }) =>
+                    setCopy({ value, copied: false })
+                  }
                 ></input>
+                <CopyToClipboard
+                  text={copy.value}
+                  onCopy={() => setCopy({ copied: true })}
+                >
+                  <Button>Copy</Button>
+                </CopyToClipboard>
               </Typography>
             </CardContent>
           </CardActionArea>
