@@ -15,9 +15,11 @@
 .link-input {
   border: 1px solid #bebebe;
   border-radius: 3px;
+  font-size: 16px;
   height: 40px;
   width: 200px;
   margin-left: 5px;
+
   padding-left: 5px;
 }
 @media (max-width: 550px) {

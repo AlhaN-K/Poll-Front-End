@@ -5,3 +5,15 @@
   background-color: rgb(239, 239, 239);
   padding-left: 10px;
 }
+
+.poll-link-input {
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  width: 200px;
+  margin-left: 8px;
+  margin-bottom: 5px;
+  padding-left: 8px;
+  font-size: 16px;
+  color: darkorchid;
+}
