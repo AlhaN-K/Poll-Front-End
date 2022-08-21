@@ -59,7 +59,6 @@ export default function PollList() {
           },
         })
         .then((response) => {
-          console.log("response :>> ", response);
           setPolls(response.data);
         })
         .catch((error) => {

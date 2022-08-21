@@ -62,7 +62,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("get poll :>> ", response);
           setPoll(response.data);
         })
         .catch((error) => {
@@ -77,7 +76,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("get participants :>> ", response);
           setRows(response.data);
         })
         .catch((error) => {
@@ -92,7 +90,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("get items :>> ", response);
           setOptions(response.data);
         })
         .catch((error) => {
@@ -107,7 +104,6 @@ export default function PollPage() {
           },
         })
         .then((response) => {
-          console.log("get choices :>> ", response);
           setChoices(response.data);
         })
         .catch((error) => {
@@ -138,7 +134,6 @@ export default function PollPage() {
     };
     axios(particConfig)
       .then((response) => {
-        console.log("participant created:>> ", response);
         setNames(response.data);
         createChoices(response.data.insertId);
       })
@@ -146,7 +141,7 @@ export default function PollPage() {
         return axios.get(`http://${BASE_URL}/participants`);
       })
       .catch((error) => {
-        console.log("participnt error :>> ", error);
+        console.log("error :>> ", error);
       });
   };
 
@@ -167,14 +162,13 @@ export default function PollPage() {
     };
     axios(choiceConfig)
       .then((response) => {
-        console.log("choice created :>> ", response);
         setChoices(response.data);
       })
       .then(() => {
         return axios.get(`http://${BASE_URL}/choices`);
       })
       .catch((error) => {
-        console.log("choice error :>> ", error);
+        console.log("error :>> ", error);
       });
   };
 

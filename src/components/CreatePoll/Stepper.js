@@ -89,14 +89,14 @@ export default function CreatePollStepper() {
     };
     axios(itemConfig)
       .then((secResponse) => {
-        console.log("secResponse :>> ", secResponse);
+        return secResponse;
       })
       .catch((error) => {
         if (error.response.status === 400) {
           setErrCreate("Something went wrong! Please Try again");
           return;
         }
-        console.log("secErr :>> ", error);
+        console.log("Err :>> ", error);
       });
   };
 
