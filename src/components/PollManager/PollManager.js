@@ -1,4 +1,5 @@
 import "./PollManager.css";
+import "react-edit-text/dist/index.css";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
@@ -10,9 +11,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
+import { BASE_URL } from "../../constants";
+import { EditText } from "react-edit-text";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,24 +40,27 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 export default function PollPage() {
   const [poll, setPoll] = useState();
   const [names, setNames] = useState([]);
-  const [choices, setChoices] = useState(["", ""]);
+  const [choices, setChoices] = useState([]);
   const [options, setOptions] = useState([]);
-  const [inputErr, setInputErr] = useState("");
-
+  const [editTitle, setEditTitle] = useState();
+  console.log("editTitle :>> ", editTitle);
+  const [editDesc, setEditDesc] = useState();
+  console.log("editDesc :>> ", editDesc);
   const token = localStorage.getItem("token");
 
-  let { id } = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     const getPolls = () => {
       axios
-        .get(`http://localhost:3003/polls/${id}`, {
+        .get(`http://${BASE_URL}/polls/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
-          console.log("response :>> ", response);
+          console.log("poll data :>> ", response);
+
           setPoll(response.data);
         })
         .catch((error) => {
@@ -64,7 +69,7 @@ export default function PollPage() {
     };
     const getParticipants = () => {
       axios
-        .get(`http://localhost:3003/participants`, {
+        .get(`http://${BASE_URL}/participants/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -79,7 +84,7 @@ export default function PollPage() {
     };
     const getOptions = () => {
       axios
-        .get(`http://localhost:3003/pollItems`, {
+        .get(`http://${BASE_URL}/pollItems/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -94,7 +99,7 @@ export default function PollPage() {
     };
     const getChoices = () => {
       axios
-        .get(`http://localhost:3003/choices`, {
+        .get(`http://${BASE_URL}/choices/id/${id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -114,6 +119,55 @@ export default function PollPage() {
     return () => {};
   }, [id, token]);
 
+  // Edit title
+  const editedTitle = () => {
+    const titleData = {
+      title: editTitle,
+    };
+    const titleConfig = {
+      method: "patch",
+      url: `http://${BASE_URL}/polls/title/${id}`,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: titleData,
+    };
+    axios(titleConfig)
+      .then((response) => {
+        console.log("title response :>> ", response);
+        // setEditTitle(response.data);
+      })
+      .catch((err) => {
+        console.log("err :>> ", err);
+      });
+  };
+
+  // Edit description
+  const editedDescription = () => {
+    const descData = {
+      description: editDesc,
+    };
+    console.log("descData :>> ", descData);
+    const descConfig = {
+      method: "patch",
+      url: `http://${BASE_URL}/polls/description/${id}`,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      data: descData,
+    };
+    axios(descConfig)
+      .then((response) => {
+        console.log("desc response :>> ", response);
+        setEditDesc(response.data);
+      })
+      .catch((err) => {
+        console.log("err :>> ", err);
+      });
+  };
+
   const handleChoices = (value, index) => {
     choices[index] = value;
     setChoices(choices);
@@ -130,23 +184,27 @@ export default function PollPage() {
     setNames(namesCopy);
   };
 
-  const addNames = () => {
-    setInputErr("");
-    //todo
-    if (names.length) {
-      setInputErr("Please enter your name!");
-    }
-    setNames(names.concat(""));
-  };
   return (
     <div style={{ padding: "20px" }}>
+      <div className="dashboard"></div>
       <div className="title-desc">
-        <h1>Title: </h1>
-        <h3>Description: </h3>
+        <h1>
+          <EditText
+            className="editable-input"
+            defaultValue={poll && poll[0].title}
+            onBlur={editedTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+          />
+        </h1>
+        <h3>
+          <EditText
+            defaultValue={poll && poll[0].description}
+            onSave={editedDescription}
+            onChange={(e) => setEditDesc(e.target.value)}
+          />
+        </h3>
       </div>
-      <div className="dashboard">
-        <span className="edit" /*onClick={addNames}*/>Edit Poll</span>
-      </div>
+      <div className="dashboard"></div>
       <TableContainer
         component={Paper}
         sx={{ marginTop: "50px", marginBottom: "10px" }}
@@ -159,7 +217,7 @@ export default function PollPage() {
                 return (
                   <StyledTableCell
                     align="center"
-                    key={index}
+                    key={option.ID}
                     onChange={(e) => handleOptions(e.target.value, index)}
                   >
                     {option.item_text}
@@ -180,17 +238,8 @@ export default function PollPage() {
                     label="Name:"
                   />
                   <br />
-                  <span
-                    style={{
-                      color: "red",
-                      fontSize: "12px",
-                      paddingLeft: "3px",
-                    }}
-                  >
-                    {name === "" ? inputErr : null}
-                  </span>
                 </StyledTableCell>
-                {choices.map((choice, index) => {
+                {options.map((choice, index) => {
                   return (
                     <StyledTableCell align="center" key={index}>
                       <Checkbox
@@ -206,14 +255,6 @@ export default function PollPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button
-        variant="contained"
-        color="inherit"
-        size="medium"
-        onClick={addNames}
-      >
-        Add
-      </Button>
     </div>
   );
 }
