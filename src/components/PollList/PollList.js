@@ -4,6 +4,7 @@ import Card from "./Card";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../../constants";
 
 export default function PollList() {
   const navigate = useNavigate();
@@ -13,13 +14,13 @@ export default function PollList() {
 
   const deletePoll = (id) => {
     axios
-      .delete(`http://localhost:3003/polls/${id}`, {
+      .delete(`http://${BASE_URL}/polls/${id}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       })
       .then(() => {
-        return axios.get(`http://localhost:3003/polls`, {
+        return axios.get(`http://${BASE_URL}/polls`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -35,14 +36,14 @@ export default function PollList() {
 
   const managePoll = (id) => {
     axios
-      .get(`http://localhost:3003/polls/${id}`, {
+      .get(`http://${BASE_URL}/polls/${id}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
         setPolls(res.data);
-        navigate("/manage");
+        navigate(`/manage/${id}`);
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -50,19 +51,22 @@ export default function PollList() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3003/polls", {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("response :>> ", response);
-        setPolls(response.data);
-      })
-      .catch((error) => {
-        console.log("error :>> ", error);
-      });
+    const getPolls = () => {
+      axios
+        .get(`http://${BASE_URL}/polls/`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("response :>> ", response);
+          setPolls(response.data);
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+        });
+    };
+    getPolls();
     return () => {};
   }, [token]);
   return (
@@ -83,6 +87,7 @@ export default function PollList() {
             key={poll.ID}
             title={poll.title}
             link={poll.ID}
+            total={poll.totalParticipants}
             onRemove={() => deletePoll(poll.ID)}
             onManage={() => managePoll(poll.ID)}
           />
