@@ -86,7 +86,9 @@ const PollCard = ({ onRemove, onManage, title, link, total }) => {
                   text={copy.value}
                   onCopy={() => setCopy({ copied: true })}
                 >
-                  <Button>Copy</Button>
+                  <Button style={{ fontWeight: "bold" }} color="secondary">
+                    Copy
+                  </Button>
                 </CopyToClipboard>
               </Typography>
             </CardContent>
